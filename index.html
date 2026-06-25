@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bipagem — REVERSA CD</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+  :root {
+    --bg:#0f1117;--surface:#181c27;--surface-2:#1e2435;
+    --border:rgba(255,255,255,0.07);--border-hover:rgba(255,255,255,0.14);
+    --accent:#4f8ef7;--accent-dim:rgba(79,142,247,0.12);--accent-glow:rgba(79,142,247,0.25);
+    --success:#34d399;--success-dim:rgba(52,211,153,0.12);
+    --danger:#f87171;--danger-dim:rgba(248,113,113,0.12);
+    --warning:#fbbf24;--warning-dim:rgba(251,191,36,0.1);
+    --text:#e8eaf0;--text-2:#8b90a0;--text-3:#4a5068;
+    --mono:'JetBrains Mono',monospace;--sans:'Inter',sans-serif;
+    --radius:10px;--radius-lg:16px;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;}
+  .shell{display:grid;grid-template-columns:280px 1fr;min-height:100vh;}
+
+  /* Sidebar */
+  .sidebar{background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:28px 20px;gap:28px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-icon{width:36px;height:36px;background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+  .logo-icon svg{width:18px;height:18px;stroke:var(--accent);}
+  .logo-text{font-size:13px;font-weight:600;color:var(--text);}
+  .logo-sub{font-size:11px;color:var(--text-2);margin-top:1px;}
+  .metric-label-side{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;}
+  .metric-stack{display:flex;flex-direction:column;gap:8px;}
+  .metric-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+  .metric-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .metric-icon svg{width:16px;height:16px;}
+  .metric-icon.blue{background:var(--accent-dim);} .metric-icon.blue svg{stroke:var(--accent);}
+  .metric-icon.green{background:var(--success-dim);} .metric-icon.green svg{stroke:var(--success);}
+  .metric-icon.amber{background:var(--warning-dim);} .metric-icon.amber svg{stroke:var(--warning);}
+  .metric-icon.pink{background:rgba(236,72,153,0.12);} .metric-icon.pink svg{stroke:#ec4899;}
+  .metric-info{flex:1;min-width:0;}
+  .metric-num{font-size:26px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;line-height:1;transition:color .3s;}
+  .metric-num.pulse{color:var(--success);}
+  .metric-desc{font-size:11px;color:var(--text-2);margin-top:2px;}
+  .divider{height:1px;background:var(--border);}
+  .history-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+  .history-list{display:flex;flex-direction:column;gap:4px;overflow-y:auto;max-height:220px;}
+  .history-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;transition:background .15s;}
+  .history-item:hover{background:var(--surface-2);}
+  .history-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0;opacity:.6;}
+  .history-dot.new{opacity:1;background:var(--success);box-shadow:0 0 6px var(--success);}
+  .history-code{font-family:var(--mono);font-size:11px;color:var(--text-2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .history-time{font-size:10px;color:var(--text-3);flex-shrink:0;}
+
+  /* Main */
+  .main{display:flex;flex-direction:column;padding:32px 36px;gap:24px;}
+  .main-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;}
+  .page-title{font-size:20px;font-weight:600;color:var(--text);letter-spacing:-.02em;}
+  .page-sub{font-size:13px;color:var(--text-2);margin-top:2px;}
+  .header-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+  /* Form */
+  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .form-group{display:flex;flex-direction:column;gap:6px;}
+  .form-group.span3{grid-column:1/-1;}
+  .form-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);}
+  input,select{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:var(--sans);font-size:14px;padding:10px 14px;width:100%;outline:none;transition:border-color .15s,box-shadow .15s;}
+  input::placeholder{color:var(--text-3);}
+  input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim);}
+  select{cursor:pointer;} select option{background:#1e2435;}
+  input[readonly]{color:var(--text-2);cursor:default;}
+  input[readonly]:focus{box-shadow:none;border-color:var(--border);}
+  .bip-row{display:flex;gap:10px;align-items:flex-end;}
+  .bip-row input{flex:1;font-family:var(--mono);font-size:15px;letter-spacing:.04em;padding:12px 14px;border-color:rgba(79,142,247,.3);}
+  .bip-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim),0 0 20px var(--accent-glow);}
+
+  /* Buttons */
+  .btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:var(--radius);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap;}
+  .btn svg{width:15px;height:15px;flex-shrink:0;}
+  .btn-accent{background:var(--accent);color:#fff;border-color:var(--accent);padding:12px 22px;font-size:14px;}
+  .btn-accent:hover{filter:brightness(1.12);}
+  .btn-accent:active{transform:scale(.98);}
+  .btn-ghost{background:var(--surface-2);color:var(--text-2);border-color:var(--border);}
+  .btn-ghost:hover{border-color:var(--border-hover);color:var(--text);}
+  .btn-danger-ghost{background:transparent;color:var(--danger);border-color:rgba(248,113,113,.2);}
+  .btn-danger-ghost:hover{background:var(--danger-dim);}
+  .btn-icon{padding:7px;background:transparent;color:var(--text-3);border-color:transparent;border-radius:6px;}
+  .btn-icon:hover{background:var(--surface-2);color:var(--danger);}
+  .btn-icon svg{width:14px;height:14px;}
+
+  /* Filial badge */
+  .filial-pill{display:inline-flex;align-items:center;padding:3px 10px;border-radius:6px;font-size:11px;font-weight:600;letter-spacing:.03em;}
+  .filial-PETPE{background:rgba(79,142,247,.15);color:#4f8ef7;border:1px solid rgba(79,142,247,.25);}
+  .filial-PETGO{background:rgba(52,211,153,.12);color:#34d399;border:1px solid rgba(52,211,153,.2);}
+  .filial-PITAJ{background:rgba(251,191,36,.1);color:#fbbf24;border:1px solid rgba(251,191,36,.2);}
+
+  /* Table */
+  .table-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;}
+  .table-toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+  .table-toolbar input,.table-toolbar select{max-width:160px;padding:8px 12px;font-size:13px;}
+  .spacer{flex:1;}
+  .count-badge{font-size:11px;font-weight:600;color:var(--text-2);background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:3px 10px;font-variant-numeric:tabular-nums;}
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  thead tr{border-bottom:1px solid var(--border);}
+  th{padding:11px 16px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);background:var(--surface);white-space:nowrap;}
+  td{padding:12px 16px;border-bottom:1px solid var(--border);color:var(--text);vertical-align:middle;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr{transition:background .12s;}
+  tbody tr:hover td{background:var(--surface-2);}
+  tbody tr.new-entry td{animation:rowIn .8s ease-out;}
+  @keyframes rowIn{0%{background:rgba(52,211,153,.15);}100%{background:transparent;}}
+  .code-cell{font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.03em;}
+  .transp-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px;background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-glow);}
+  .num-cell{color:var(--text-3);font-variant-numeric:tabular-nums;font-size:12px;}
+  .time-cell{color:var(--text-3);font-family:var(--mono);font-size:11px;}
+  .empty-state{text-align:center;padding:48px 24px;color:var(--text-3);}
+  .empty-state svg{width:36px;height:36px;margin-bottom:12px;opacity:.3;}
+  .empty-state p{font-size:13px;}
+
+  /* Loading overlay */
+  .loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;transition:opacity .4s;}
+  .loading-overlay.hide{opacity:0;pointer-events:none;}
+  .spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{font-size:13px;color:var(--text-2);}
+
+  /* Toast */
+  #toast{position:fixed;bottom:24px;right:24px;padding:12px 18px;border-radius:var(--radius);font-size:13px;font-weight:500;display:none;z-index:9999;border:1px solid;animation:toastIn .2s ease;}
+  @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  #toast.success{background:rgba(52,211,153,.15);color:var(--success);border-color:rgba(52,211,153,.3);}
+  #toast.danger{background:var(--danger-dim);color:var(--danger);border-color:rgba(248,113,113,.3);}
+  #toast.warning{background:var(--warning-dim);color:var(--warning);border-color:rgba(251,191,36,.3);}
+  .live-dot{display:inline-block;width:7px;height:7px;background:var(--success);border-radius:50%;margin-right:6px;animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+  /* Tela de entrada */
+  .entrada{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:8888;transition:opacity .5s,transform .5s;}
+  .entrada.hide{opacity:0;transform:scale(.97);pointer-events:none;}
+  .entrada-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:28px;}
+  .entrada-logo{display:flex;align-items:center;gap:12px;}
+  .entrada-logo-icon{width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+  .entrada-logo-icon svg{width:22px;height:22px;stroke:var(--accent);}
+  .entrada-title{font-size:18px;font-weight:600;color:var(--text);}
+  .entrada-sub{font-size:13px;color:var(--text-2);margin-top:2px;}
+  .entrada-fields{display:flex;flex-direction:column;gap:16px;}
+  .entrada-filiais{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .filial-btn{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 10px;cursor:pointer;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .filial-btn:hover{border-color:var(--border-hover);}
+  .filial-btn.selected-PETPE{background:rgba(79,142,247,.12);border-color:rgba(79,142,247,.4);}
+  .filial-btn.selected-PETGO{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.35);}
+  .filial-btn.selected-PITAJ{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.35);}
+  .filial-btn-label{font-size:13px;font-weight:600;color:var(--text);}
+  .filial-btn-sub{font-size:10px;color:var(--text-3);}
+  .geo-box{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:flex-start;gap:12px;}
+  .geo-box-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .geo-box-icon svg{width:14px;height:14px;}
+  .geo-box-icon.loading{background:var(--warning-dim);} .geo-box-icon.loading svg{stroke:var(--warning);}
+  .geo-box-icon.ok{background:var(--success-dim);} .geo-box-icon.ok svg{stroke:var(--success);}
+  .geo-box-icon.err{background:var(--danger-dim);} .geo-box-icon.err svg{stroke:var(--danger);}
+  .geo-box-content{flex:1;min-width:0;}
+  .geo-box-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+  .geo-box-text{font-size:13px;color:var(--text-2);line-height:1.4;word-break:break-word;}
+  .btn-entrada{width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:var(--radius);}
+  .btn-entrada:disabled{opacity:.4;cursor:not-allowed;filter:none;}
+</style>
+</head>
+<body>
+
+<div class="entrada" id="tela-entrada">
+  <div class="entrada-card">
+    <div class="entrada-logo">
+      <div class="entrada-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h2M7 5h1M3 9h2M7 9h1M3 13h2M7 13h1M12 5h2M16 5h1M12 9h2M16 9h1M12 13h2M16 13h1M21 5v14M3 19h14"/></svg>
+      </div>
+      <div>
+        <div class="entrada-title">REVERSA CD</div>
+        <div class="entrada-sub">Identifique a filial para iniciar a bipagem</div>
+      </div>
+    </div>
+
+    <div class="entrada-fields">
+      <div>
+        <div class="form-label" style="margin-bottom:10px;">Selecione a filial</div>
+        <div class="entrada-filiais">
+          <button class="filial-btn" id="btn-PETPE" onclick="selecionarFilial('PETPE')">
+            <span class="filial-pill filial-PETPE">PETPE</span>
+            <span class="filial-btn-sub">Pernambuco</span>
+          </button>
+          <button class="filial-btn" id="btn-PETGO" onclick="selecionarFilial('PETGO')">
+            <span class="filial-pill filial-PETGO">PETGO</span>
+            <span class="filial-btn-sub">Goiás</span>
+          </button>
+          <button class="filial-btn" id="btn-PITAJ" onclick="selecionarFilial('PITAJ')">
+            <span class="filial-pill filial-PITAJ">PITAJ</span>
+            <span class="filial-btn-sub">Itajaí</span>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <div class="form-label" style="margin-bottom:10px;">Localização</div>
+        <div class="geo-box">
+          <div class="geo-box-icon loading" id="geo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </div>
+          <div class="geo-box-content">
+            <div class="geo-box-label">Endereço detectado</div>
+            <div class="geo-box-text" id="geo-entrada-text">Obtendo localização...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-accent btn-entrada" id="btn-iniciar" onclick="iniciarBipagem()" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Iniciar bipagem
+    </button>
+  </div>
+</div>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-text">Carregando histórico do Sheets...</div>
+</div>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h2M7 5h1M3 9h2M7 9h1M3 13h2M7 13h1M12 5h2M16 5h1M12 9h2M16 9h1M12 13h2M16 13h1M21 5v14M3 19h14"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">REVERSA CD</div>
+        <div class="logo-sub">Controle de bipagem</div>
+      </div>
+    </div>
+
+    <div class="metric-stack">
+      <div class="metric-label-side">Hoje</div>
+      <div class="metric-card">
+        <div class="metric-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16M12 4v16M17 4v16"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-num" id="m-volumes">0</div>
+          <div class="metric-desc">volumes bipados</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-num" id="m-total">0</div>
+          <div class="metric-desc">leituras realizadas</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-num" id="m-transp">0</div>
+          <div class="metric-desc">filiais ativas hoje</div>
+        </div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon pink">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="metric-info">
+          <div class="metric-num" id="m-filiais">0</div>
+          <div class="metric-desc">operadores ativos hoje</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="history-label">Últimas bipagens</div>
+      <div class="history-list" id="history-list">
+        <div style="font-size:12px;color:var(--text-3);padding:8px 10px;">Carregando...</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="main-header">
+      <div>
+        <div class="page-title"><span class="live-dot"></span>Bipagem de Volumes &nbsp;<span id="filial-badge"></span></div>
+        <div class="page-sub" id="clock">—</div>
+      </div>
+      <div class="header-actions">
+        <span id="sheet-status" style="font-size:12px;color:var(--text-3);margin-right:4px;"></span>
+        <button class="btn btn-ghost" onclick="exportCSV()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Exportar CSV
+        </button>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Operador</label>
+          <input type="text" id="operador" placeholder="Nome do operador">
+        </div>
+        <div class="form-group span3">
+          <label class="form-label">Código de barras — cada bipe registra +1 volume</label>
+          <div class="bip-row">
+            <input type="text" id="barcode" placeholder="Bipe ou pressione Enter para registrar..." autocomplete="off" autofocus spellcheck="false">
+            <button class="btn btn-accent" onclick="registrar()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+              Registrar
+            </button>
+          </div>
+          <div id="geo-status" style="margin-top:8px;font-size:12px;color:var(--text-3);display:flex;align-items:center;gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            <span id="geo-text">Aguardando localização...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="table-toolbar">
+        <input type="text" id="f-codigo" placeholder="Buscar código..." oninput="renderTable()" style="font-family:var(--mono);">
+        <select id="f-filial" onchange="renderTable()">
+          <option value="">Todas as filiais</option>
+          <option value="PETPE">PETPE</option>
+          <option value="PETGO">PETGO</option>
+          <option value="PITAJ">PITAJ</option>
+        </select>
+        <div class="spacer"></div>
+        <span class="count-badge" id="count-badge">0 registros</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:45px">#</th>
+              <th style="width:80px">Filial</th>
+              <th>Código de barras</th>
+              <th style="width:110px">Operador</th>
+              <th style="width:140px">Data / Hora</th>
+              <th style="width:180px">Localização</th>
+              <th style="width:44px"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<!-- Modal de confirmação de exclusão -->
+<div id="modal-excluir" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9990;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:380px;width:90%;display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--danger-dim);border:1px solid rgba(248,113,113,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);">Excluir registro?</div>
+        <div style="font-size:12px;color:var(--text-2);margin-top:2px;">Esta ação não pode ser desfeita.</div>
+      </div>
+    </div>
+    <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;">Código bipado</div>
+      <div id="modal-codigo" style="font-family:var(--mono);font-size:14px;color:var(--accent);"></div>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-danger-ghost" style="flex:1;justify-content:center;" onclick="confirmarDelete()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        Excluir
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // URL do Apps Script — substitua pela URL real do seu Web App
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
+
+  let registros = [];
+  let lastId = null;
+  let geoAtual = '';
+  let filialSessao = '';
+
+  // ── Tela de entrada ──
+  function selecionarFilial(filial) {
+    filialSessao = filial;
+    ['PETPE','PETGO','PITAJ'].forEach(f => {
+      document.getElementById('btn-' + f).className = 'filial-btn' + (f === filial ? ' selected-' + f : '');
+    });
+    verificarBtnIniciar();
+  }
+
+  function verificarBtnIniciar() {
+    const btn = document.getElementById('btn-iniciar');
+    btn.disabled = !filialSessao;
+  }
+
+  function iniciarBipagem() {
+    if (!filialSessao) return;
+    // Atualiza badge de filial no header
+    const badge = document.getElementById('filial-badge');
+    if (badge) {
+      badge.innerHTML = `<span class="filial-pill filial-${filialSessao}">${filialSessao}</span>`;
+    }
+    document.getElementById('tela-entrada').classList.add('hide');
+    setTimeout(() => {
+      document.getElementById('tela-entrada').style.display = 'none';
+      document.getElementById('operador').focus();
+    }, 500);
+  }
+
+  // ── Geolocalização ──
+  function iniciarGeo() {
+    if (!navigator.geolocation) {
+      atualizarGeoUI('GPS não disponível neste dispositivo', 'err');
+      return;
+    }
+    atualizarGeoUI('Obtendo localização...', 'loading');
+
+    // Primeira tentativa: getCurrentPosition (mais rápido pra primeira leitura)
+    navigator.geolocation.getCurrentPosition(
+      pos => obterEndereco(pos.coords.latitude, pos.coords.longitude),
+      err => {
+        if (err.code === 1) {
+          atualizarGeoUI('Permissão negada — localização não será registrada', 'err');
+        } else {
+          // Fallback: tenta watchPosition sem timeout forçado
+          tentarWatch();
+        }
+      },
+      { enableHighAccuracy: false, timeout: 30000, maximumAge: 60000 }
+    );
+  }
+
+  function tentarWatch() {
+    atualizarGeoUI('Aguardando sinal GPS...', 'loading');
+    const id = navigator.geolocation.watchPosition(
+      pos => {
+        navigator.geolocation.clearWatch(id);
+        obterEndereco(pos.coords.latitude, pos.coords.longitude);
+      },
+      err => {
+        navigator.geolocation.clearWatch(id);
+        geoAtual = '';
+        atualizarGeoUI('GPS indisponível — localização não será registrada', 'err');
+      },
+      { enableHighAccuracy: false, maximumAge: 60000 }
+    );
+  }
+
+  async function obterEndereco(lat, lon) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, {
+        headers: { 'Accept-Language': 'pt-BR' }
+      });
+      const data = await res.json();
+      const a = data.address || {};
+      const partes = [
+        a.road || a.pedestrian || a.street || '',
+        a.house_number || '',
+        a.suburb || a.neighbourhood || '',
+        a.city || a.town || a.village || '',
+        a.state || ''
+      ].filter(Boolean);
+      geoAtual = partes.join(', ') || `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      atualizarGeoUI(geoAtual, 'ok');
+    } catch(e) {
+      geoAtual = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      atualizarGeoUI(geoAtual, 'ok');
+    }
+  }
+
+  function atualizarGeoUI(texto, estado) {
+    // Tela de entrada
+    const t = document.getElementById('geo-entrada-text');
+    const icon = document.getElementById('geo-icon');
+    if (t) t.textContent = texto;
+    if (icon) icon.className = 'geo-box-icon ' + estado;
+    // Campo abaixo do barcode
+    const gs = document.getElementById('geo-text');
+    const gw = document.getElementById('geo-status');
+    if (gs) gs.textContent = texto;
+    if (gw) {
+      gw.style.color = estado === 'ok' ? 'var(--success)' : estado === 'err' ? 'var(--text-3)' : 'var(--warning)';
+    }
+  }
+
+  // Clock
+  function updateClock() {
+    const d = new Date();
+    document.getElementById('clock').textContent =
+      d.toLocaleDateString('pt-BR', {weekday:'long',day:'2-digit',month:'long',year:'numeric'}) +
+      ' · ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  function agora() {
+    const d = new Date();
+    return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }
+
+  // Registro automático: dispara no Enter OU quando o código para de ser digitado (debounce ~300ms)
+  let _bipTimer = null;
+  const _bipInput = document.getElementById('barcode');
+
+  _bipInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      clearTimeout(_bipTimer);
+      registrar();
+    }
+  });
+
+  _bipInput.addEventListener('input', () => {
+    clearTimeout(_bipTimer);
+    if (_bipInput.value.trim().length > 0) {
+      _bipTimer = setTimeout(() => registrar(), 300);
+    }
+  });
+
+  // ── Carregar histórico do Sheets ──
+  async function carregarHistorico() {
+    try {
+      const res = await fetch(APPS_SCRIPT_URL + '?action=getAll', { mode: 'cors' });
+      const data = await res.json();
+      if (data.status === 'ok' && Array.isArray(data.rows)) {
+        registros = data.rows.map((r, i) => ({
+          id: i + 1,
+          filial: r[1] || '',
+          barcode: r[2] || '',
+          operador: r[3] || '',
+          datetime: r[4] || '',
+          localizacao: r[5] || ''
+        }));
+      }
+      setSheetStatus('idle');
+    } catch(e) {
+      setSheetStatus('error');
+      toast('Não foi possível carregar o histórico.', 'warning');
+    } finally {
+      document.getElementById('loading').classList.add('hide');
+      renderTable();
+      renderMetrics();
+      renderHistory();
+    }
+  }
+
+  // ── Registrar bipe ──
+  function registrar() {
+    const barcode = document.getElementById('barcode').value.trim();
+    const operador = document.getElementById('operador').value.trim();
+    const filial = filialSessao;
+
+    if (!filial) { toast('Filial não identificada.', 'danger'); return; }
+    if (!barcode) { toast('Informe o código de barras.', 'danger'); return; }
+    if (!operador) { toast('Informe o operador.', 'danger'); return; }
+
+    const registro = { id: Date.now(), filial, barcode, operador, datetime: agora(), localizacao: geoAtual };
+    registros.unshift(registro);
+    lastId = registro.id;
+    renderTable();
+    renderMetrics();
+    renderHistory();
+    bumpMetric();
+    document.getElementById('barcode').value = '';
+    document.getElementById('barcode').focus();
+
+    enviarSheets(registro);
+  }
+
+  // ── Enviar pro Sheets ──
+  function enviarSheets(registro) {
+    setSheetStatus('sending');
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {'Content-Type':'text/plain'},
+      body: JSON.stringify({
+        action: 'append',
+        filial: registro.filial,
+        barcode: registro.barcode,
+        operador: registro.operador,
+        datetime: registro.datetime,
+        localizacao: registro.localizacao || ''
+      })
+    })
+    .then(() => { setSheetStatus('ok'); setTimeout(() => setSheetStatus('idle'), 3000); })
+    .catch(() => { setSheetStatus('error'); toast('Erro ao enviar para o Sheets.', 'warning'); setTimeout(() => setSheetStatus('idle'), 4000); });
+  }
+
+  function setSheetStatus(status) {
+    const el = document.getElementById('sheet-status');
+    if (!el) return;
+    const map = {
+      idle:    {text:'Sheets conectado',  color:'var(--success)', dot:'#34d399'},
+      sending: {text:'Enviando...',        color:'var(--warning)', dot:'#fbbf24'},
+      ok:      {text:'Salvo no Sheets',   color:'var(--success)', dot:'#34d399'},
+      error:   {text:'Falha no envio',    color:'var(--danger)',  dot:'#f87171'},
+      off:     {text:'Sheets não config', color:'var(--text-3)',  dot:'#4a5068'},
+    };
+    const s = map[status] || map.idle;
+    el.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${s.dot};margin-right:6px;vertical-align:middle"></span><span style="color:${s.color}">${s.text}</span>`;
+  }
+
+  function bumpMetric() {
+    const el = document.getElementById('m-volumes');
+    el.classList.add('pulse');
+    setTimeout(() => el.classList.remove('pulse'), 600);
+  }
+
+  function renderMetrics() {
+    const hoje = new Date().toLocaleDateString('pt-BR');
+    const hoj = registros.filter(r => r.datetime.startsWith(hoje));
+    document.getElementById('m-volumes').textContent = hoj.length;
+    document.getElementById('m-total').textContent = hoj.length;
+    document.getElementById('m-transp').textContent = new Set(hoj.map(r => r.filial)).size;
+    document.getElementById('m-filiais').textContent = new Set(hoj.map(r => r.operador)).size;
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    const recent = registros.slice(0, 8);
+    if (recent.length === 0) {
+      list.innerHTML = '<div style="font-size:12px;color:var(--text-3);padding:8px 10px;">Nenhuma bipagem ainda</div>';
+      return;
+    }
+    list.innerHTML = recent.map((r, i) => `
+      <div class="history-item">
+        <div class="history-dot ${i === 0 && r.id === lastId ? 'new' : ''}"></div>
+        <div class="history-code">${r.barcode}</div>
+        <div class="history-time">${r.datetime.split(' ')[1] || ''}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderTable() {
+    const fCod = document.getElementById('f-codigo').value.toLowerCase();
+    const fFilial = document.getElementById('f-filial').value;
+
+    const filtered = registros.filter(r =>
+      (!fCod || r.barcode.toLowerCase().includes(fCod)) &&
+      (!fFilial || r.filial === fFilial)
+    );
+
+    document.getElementById('count-badge').textContent =
+      filtered.length === 1 ? '1 registro' : `${filtered.length} registros`;
+
+    const tbody = document.getElementById('tbody');
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6M3 15h6M15 3v6M15 15v6M15 9h6M15 15h6"/></svg>
+        <p>Nenhum volume bipado ainda.<br>Bipe o primeiro código para começar.</p>
+      </div></td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((r, i) => `
+      <tr id="row-${r.id}" class="${r.id === lastId ? 'new-entry' : ''}">
+        <td class="num-cell">${filtered.length - i}</td>
+        <td><span class="filial-pill filial-${r.filial}">${r.filial}</span></td>
+        <td class="code-cell">${r.barcode}</td>
+        <td style="color:var(--text-2)">${r.operador}</td>
+        <td class="time-cell">${r.datetime}</td>
+        <td style="font-size:11px;color:var(--text-3);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.localizacao || ''}">${r.localizacao || '<span style="color:var(--text-3);opacity:.5">—</span>'}</td>
+        <td><button class="btn btn-icon" onclick="confirmarExclusao(${r.id}, '${r.barcode}')" title="Excluir registro">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+        </button></td>
+      </tr>
+    `).join('');
+
+    if (lastId) setTimeout(() => { lastId = null; }, 900);
+  }
+
+  function exportCSV() {
+    if (registros.length === 0) { toast('Nenhum dado para exportar.', 'warning'); return; }
+    const header = ['#','Filial','Código','Operador','Data/Hora','Localização'];
+    const rows = registros.map((r,i) => [i+1, r.filial, r.barcode, r.operador, r.datetime, r.localizacao || '']);
+    const csv = [header,...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `bipagem_cd_${new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('CSV exportado!', 'success');
+  }
+
+  function toast(msg, type='success') {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = type;
+    el.style.display = 'block';
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.style.display = 'none', 2500);
+  }
+
+  let idParaExcluir = null;
+  let registroParaExcluir = null;
+
+  function confirmarExclusao(id, barcode) {
+    idParaExcluir = id;
+    registroParaExcluir = registros.find(r => r.id === id) || null;
+    document.getElementById('modal-codigo').textContent = barcode;
+    document.getElementById('modal-excluir').style.display = 'flex';
+  }
+
+  function fecharModal() {
+    idParaExcluir = null;
+    registroParaExcluir = null;
+    document.getElementById('modal-excluir').style.display = 'none';
+  }
+
+  function confirmarDelete() {
+    if (!idParaExcluir) return;
+    const reg = registroParaExcluir;
+    registros = registros.filter(r => r.id !== idParaExcluir);
+    fecharModal();
+    renderTable();
+    renderMetrics();
+    renderHistory();
+    toast('Registro excluído.', 'warning');
+
+    // Remove do Sheets
+    if (reg) {
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {'Content-Type':'text/plain'},
+        body: JSON.stringify({
+          action: 'delete',
+          barcode: reg.barcode,
+          datetime: reg.datetime
+        })
+      }).catch(() => toast('Excluído localmente, mas falhou no Sheets.', 'warning'));
+    }
+  }
+
+  // Fechar modal clicando fora
+  document.getElementById('modal-excluir').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+
+  carregarHistorico();
+  iniciarGeo();</script>
+</body>
+</html>
