@@ -163,11 +163,65 @@
   .geo-box-text{font-size:13px;color:var(--text-2);line-height:1.4;word-break:break-word;}
   .btn-entrada{width:100%;justify-content:center;padding:14px;font-size:15px;border-radius:var(--radius);}
   .btn-entrada:disabled{opacity:.4;cursor:not-allowed;filter:none;}
+
+  /* Login */
+  .login{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9500;transition:opacity .4s,transform .4s;}
+  .login.hide{opacity:0;transform:scale(.97);pointer-events:none;}
+  .login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:24px;}
+  .login-logo{display:flex;align-items:center;gap:12px;}
+  .login-logo-icon{width:44px;height:44px;background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+  .login-logo-icon svg{width:22px;height:22px;stroke:var(--accent);}
+  .login-title{font-size:18px;font-weight:600;color:var(--text);}
+  .login-sub{font-size:13px;color:var(--text-2);margin-top:2px;}
+  .login-fields{display:flex;flex-direction:column;gap:14px;}
+  .login-error{font-size:12px;color:var(--danger);background:var(--danger-dim);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:10px 14px;display:none;}
+  .login-error.show{display:block;}
+  .input-wrap{position:relative;}
+  .input-wrap input{padding-right:40px;}
+  .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-3);padding:0;display:flex;align-items:center;}
+  .toggle-pw:hover{color:var(--text-2);}
+  .toggle-pw svg{width:16px;height:16px;}
 </style>
 </head>
 <body>
 
-<div class="entrada" id="tela-entrada">
+<div class="login" id="tela-login">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </div>
+      <div>
+        <div class="login-title">REVERSA CD</div>
+        <div class="login-sub">Acesso restrito — identifique-se</div>
+      </div>
+    </div>
+
+    <div class="login-fields">
+      <div class="form-group">
+        <label class="form-label">Usuário</label>
+        <input type="text" id="login-user" placeholder="Digite seu usuário" autocomplete="off" spellcheck="false" autocapitalize="characters">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <div class="input-wrap">
+          <input type="password" id="login-pass" placeholder="Digite sua senha" autocomplete="off">
+          <button class="toggle-pw" onclick="toggleSenha()" tabindex="-1" type="button">
+            <svg id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="login-error" id="login-error">Usuário ou senha incorretos.</div>
+    </div>
+
+    <button class="btn btn-accent btn-entrada" onclick="fazerLogin()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+      Entrar
+    </button>
+  </div>
+</div>
+
+<div class="entrada" id="tela-entrada" style="display:none;">
   <div class="entrada-card">
     <div class="entrada-logo">
       <div class="entrada-logo-icon">
@@ -327,12 +381,14 @@
     <div class="table-card">
       <div class="table-toolbar">
         <input type="text" id="f-codigo" placeholder="Buscar código..." oninput="renderTable()" style="font-family:var(--mono);">
-        <select id="f-filial" onchange="renderTable()">
-          <option value="">Todas as filiais</option>
-          <option value="PETPE">PETPE</option>
-          <option value="PETGO">PETGO</option>
-          <option value="PITAJ">PITAJ</option>
-        </select>
+        <div id="filtro-filial-wrap" style="display:none;">
+          <select id="f-filial" onchange="renderTable()">
+            <option value="">Todas as filiais</option>
+            <option value="PETPE">PETPE</option>
+            <option value="PETGO">PETGO</option>
+            <option value="PITAJ">PITAJ</option>
+          </select>
+        </div>
         <div class="spacer"></div>
         <span class="count-badge" id="count-badge">0 registros</span>
       </div>
@@ -383,6 +439,84 @@
     </div>
   </div>
 </div>
+
+<script>
+  const USUARIOS = {
+    'REVERSAPE':    { senha: 'reversape123',    filial: 'PETPE',  mestre: false },
+    'REVERSAGO':    { senha: 'reversago123',    filial: 'PETGO',  mestre: false },
+    'REVERSASC':    { senha: 'reversasc123',    filial: 'PITAJ',  mestre: false },
+    'REVERSAMESTRE':{ senha: 'reversamestre123', filial: null,    mestre: true  }
+  };
+
+  let usuarioLogado = null;
+  let isMestre = false;
+
+  function mostrarFiltroFilial(show) {
+    isMestre = show;
+    const el = document.getElementById('filtro-filial-wrap');
+    if (el) el.style.display = show ? '' : 'none';
+  }
+
+  function fazerLogin() {
+    const user = document.getElementById('login-user').value.trim().toUpperCase();
+    const pass = document.getElementById('login-pass').value;
+    const erro = document.getElementById('login-error');
+    const dados = USUARIOS[user];
+
+    if (dados && dados.senha === pass) {
+      usuarioLogado = user;
+      erro.classList.remove('show');
+      const tela = document.getElementById('tela-login');
+      tela.classList.add('hide');
+
+      if (dados.mestre) {
+        // Mestre: vai pra tela de seleção de filial (pode bipar em qualquer uma)
+        // e vê todos os registros
+        filialSessao = '';
+        mostrarFiltroFilial(true);
+        setTimeout(() => {
+          tela.style.display = 'none';
+          const entrada = document.getElementById('tela-entrada');
+          entrada.style.display = 'flex';
+        }, 400);
+      } else {
+        // Usuário normal: filial definida pelo login
+        filialSessao = dados.filial;
+        mostrarFiltroFilial(false);
+        setTimeout(() => {
+          tela.style.display = 'none';
+          const badge = document.getElementById('filial-badge');
+          if (badge) badge.innerHTML = `<span class="filial-pill filial-${filialSessao}">${filialSessao}</span>`;
+          document.getElementById('tela-entrada').style.display = 'none';
+          document.getElementById('loading').style.display = 'flex';
+          document.getElementById('loading').classList.remove('hide');
+          carregarHistorico();
+          iniciarGeo();
+          setTimeout(() => document.getElementById('operador').focus(), 600);
+        }, 400);
+      }
+    } else {
+      erro.classList.add('show');
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-pass').focus();
+    }
+  }
+
+  function toggleSenha() {
+    const input = document.getElementById('login-pass');
+    input.type = input.type === 'password' ? 'text' : 'password';
+  }
+
+  // Enter no campo de senha dispara login
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('login-pass').addEventListener('keydown', e => {
+      if (e.key === 'Enter') fazerLogin();
+    });
+    document.getElementById('login-user').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('login-pass').focus();
+    });
+  });
+</script>
 
 <script>
   const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbypgVxpKtUbWrDG0vB8khC3D8yMU0d4nD8xbBTDbK3FHBY1Slpe5u1NLL1KOsAr3asV/exec';
@@ -535,14 +669,16 @@
       const res = await fetch(APPS_SCRIPT_URL + '?action=getAll', { mode: 'cors' });
       const data = await res.json();
       if (data.status === 'ok' && Array.isArray(data.rows)) {
-        registros = data.rows.map((r, i) => ({
-          id: i + 1,
-          filial: r[1] || '',
-          barcode: r[2] || '',
-          operador: r[3] || '',
-          datetime: r[4] || '',
-          localizacao: r[5] || ''
-        }));
+        registros = data.rows
+          .map((r, i) => ({
+            id: i + 1,
+            filial: r[1] || '',
+            barcode: r[2] || '',
+            operador: r[3] || '',
+            datetime: r[4] || '',
+            localizacao: r[5] || ''
+          }))
+          .filter(r => isMestre || r.filial === filialSessao);
       }
       setSheetStatus('idle');
     } catch(e) {
@@ -564,6 +700,7 @@
 
     if (!filial) { toast('Filial não identificada.', 'danger'); return; }
     if (!barcode) { toast('Informe o código de barras.', 'danger'); return; }
+    if (!/^\d+$/.test(barcode)) { toast('Código inválido — apenas números são aceitos.', 'danger'); document.getElementById('barcode').select(); return; }
     if (!operador) { toast('Informe o operador.', 'danger'); return; }
 
     const registro = { id: Date.now(), filial, barcode, operador, datetime: agora(), localizacao: geoAtual };
@@ -646,7 +783,8 @@
 
   function renderTable() {
     const fCod = document.getElementById('f-codigo').value.toLowerCase();
-    const fFilial = document.getElementById('f-filial').value;
+    const fFilialEl = document.getElementById('f-filial');
+    const fFilial = fFilialEl ? fFilialEl.value : '';
 
     const filtered = registros.filter(r =>
       (!fCod || r.barcode.toLowerCase().includes(fCod)) &&
@@ -750,9 +888,6 @@
   // Fechar modal clicando fora
   document.getElementById('modal-excluir').addEventListener('click', function(e) {
     if (e.target === this) fecharModal();
-  });
-
-  carregarHistorico();
-  iniciarGeo();</script>
+  });</script>
 </body>
 </html>
