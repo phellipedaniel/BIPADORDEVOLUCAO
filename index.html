@@ -562,18 +562,16 @@
     }
     atualizarGeoUI('Obtendo localização...', 'loading');
 
-    // Primeira tentativa: getCurrentPosition (mais rápido pra primeira leitura)
     navigator.geolocation.getCurrentPosition(
       pos => obterEndereco(pos.coords.latitude, pos.coords.longitude),
       err => {
         if (err.code === 1) {
           atualizarGeoUI('Permissão negada — localização não será registrada', 'err');
         } else {
-          // Fallback: tenta watchPosition sem timeout forçado
           tentarWatch();
         }
       },
-      { enableHighAccuracy: false, timeout: 30000, maximumAge: 60000 }
+      { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
     );
   }
 
@@ -582,15 +580,23 @@
     const id = navigator.geolocation.watchPosition(
       pos => {
         navigator.geolocation.clearWatch(id);
+        clearTimeout(watchTimeout);
         obterEndereco(pos.coords.latitude, pos.coords.longitude);
       },
       err => {
         navigator.geolocation.clearWatch(id);
+        clearTimeout(watchTimeout);
         geoAtual = '';
-        atualizarGeoUI('GPS indisponível — localização não será registrada', 'err');
+        atualizarGeoUI('Sem localização — bipagem funcionando normalmente', 'err');
       },
       { enableHighAccuracy: false, maximumAge: 60000 }
     );
+    // Desiste após 6s
+    const watchTimeout = setTimeout(() => {
+      navigator.geolocation.clearWatch(id);
+      geoAtual = '';
+      atualizarGeoUI('Sem localização — bipagem funcionando normalmente', 'err');
+    }, 6000);
   }
 
   async function obterEndereco(lat, lon) {
