@@ -181,6 +181,79 @@
   .toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-3);padding:0;display:flex;align-items:center;}
   .toggle-pw:hover{color:var(--text-2);}
   .toggle-pw svg{width:16px;height:16px;}
+
+  /* Tabs */
+  .tabs{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:4px;}
+  .tab{display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:7px;font-size:13px;font-weight:500;color:var(--text-2);cursor:pointer;border:none;background:transparent;transition:all .15s;}
+  .tab svg{width:15px;height:15px;}
+  .tab:hover{color:var(--text);}
+  .tab.active{background:var(--accent);color:#fff;}
+  .view{display:none;}
+  .view.active{display:flex;flex-direction:column;gap:24px;}
+
+  /* Dashboard */
+  .dash-filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 20px;}
+  .dash-filters .filter-group{display:flex;flex-direction:column;gap:5px;}
+  .dash-filters label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);}
+  .dash-filters select{padding:8px 12px;font-size:13px;min-width:150px;}
+  .dash-refresh{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text-3);}
+  .refresh-dot{width:6px;height:6px;border-radius:50%;background:var(--success);animation:blink 2s infinite;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+  .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent);opacity:.6;}
+  .kpi-card.green::before{background:var(--success);} .kpi-card.amber::before{background:var(--warning);} .kpi-card.pink::before{background:#ec4899;} .kpi-card.blue::before{background:var(--accent);}
+  .kpi-label{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);}
+  .kpi-value{font-size:32px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;line-height:1;transition:color .3s;}
+  .kpi-value.pulse{color:var(--success);}
+  .kpi-sub{font-size:12px;color:var(--text-2);}
+
+  .dash-row{display:grid;gap:18px;}
+  .dash-row.cols-2{grid-template-columns:1fr 1fr;}
+  .dash-row.cols-3-2{grid-template-columns:3fr 2fr;}
+  .dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .dash-card-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;}
+  .dash-card-title svg{width:16px;height:16px;stroke:var(--text-2);}
+  .dash-card-sub{font-size:12px;color:var(--text-3);margin-top:-10px;}
+  .chart-wrap{position:relative;width:100%;}
+  .chart-wrap canvas{max-width:100%;}
+
+  .dash-table{width:100%;border-collapse:collapse;font-size:13px;}
+  .dash-table th{padding:9px 12px;text-align:left;font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--text-3);border-bottom:1px solid var(--border);white-space:nowrap;}
+  .dash-table th.r,.dash-table td.r{text-align:right;}
+  .dash-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text);}
+  .dash-table tbody tr:last-child td{border-bottom:none;}
+  .dash-table tbody tr:hover td{background:var(--surface-2);}
+  .dash-table .rank{color:var(--text-3);font-variant-numeric:tabular-nums;font-weight:600;}
+  .dash-table .mono{font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12px;}
+  .bar-mini{height:6px;border-radius:3px;background:var(--accent);min-width:2px;}
+  .pct-cell{display:flex;align-items:center;gap:8px;}
+  .pct-bar-bg{flex:1;height:5px;background:var(--surface-2);border-radius:3px;overflow:hidden;min-width:40px;}
+  .pct-bar-fill{height:100%;border-radius:3px;}
+  .dash-empty{text-align:center;padding:32px;color:var(--text-3);font-size:13px;}
+  .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .summary-item{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;}
+  .summary-item-label{font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--text-3);margin-bottom:5px;}
+  .summary-item-value{font-size:18px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
+  .summary-item-value .delta{font-size:12px;margin-left:6px;}
+  .delta.up{color:var(--success);} .delta.down{color:var(--danger);}
+
+  /* Heatmap */
+  .heatmap{display:grid;grid-template-columns:auto repeat(24,1fr);gap:2px;font-size:9px;}
+  .heat-corner{}
+  .heat-hour-label{color:var(--text-3);text-align:center;font-size:8px;padding-bottom:2px;}
+  .heat-day-label{color:var(--text-3);font-size:10px;padding-right:6px;display:flex;align-items:center;justify-content:flex-end;}
+  .heat-cell{aspect-ratio:1;border-radius:2px;background:var(--surface-2);position:relative;cursor:default;transition:transform .1s;}
+  .heat-cell:hover{transform:scale(1.3);z-index:5;outline:1px solid var(--border-hover);}
+  .heat-legend{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-3);margin-top:8px;justify-content:flex-end;}
+  .heat-legend-scale{display:flex;gap:2px;}
+  .heat-legend-box{width:12px;height:12px;border-radius:2px;}
+
+  @media (max-width:1100px){
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .dash-row.cols-2,.dash-row.cols-3-2{grid-template-columns:1fr;}
+    .summary-grid{grid-template-columns:repeat(2,1fr);}
+  }
 </style>
 </head>
 <body>
@@ -352,9 +425,25 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Exportar CSV
         </button>
+        <button class="btn btn-ghost" onclick="logout()" title="Sair da sessão" style="color:var(--text-3);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          Sair
+        </button>
       </div>
     </div>
 
+    <div class="tabs" id="tabs-nav" style="display:none;">
+      <button class="tab active" id="tab-bipagem" onclick="trocarView('bipagem')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h2M7 5h1M3 9h2M7 9h1M3 13h2M7 13h1M12 5h2M16 5h1M12 9h2M16 9h1M12 13h2M16 13h1M21 5v14M3 19h14"/></svg>
+        Bipagem
+      </button>
+      <button class="tab" id="tab-dashboard" onclick="trocarView('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </button>
+    </div>
+
+    <div class="view active" id="view-bipagem">
     <div class="form-card">
       <div class="form-row">
         <div class="form-group">
@@ -409,6 +498,180 @@
         </table>
       </div>
     </div>
+    </div><!-- /view-bipagem -->
+
+    <!-- VIEW DASHBOARD -->
+    <div class="view" id="view-dashboard">
+
+      <!-- Filtros globais -->
+      <div class="dash-filters">
+        <div class="filter-group">
+          <label>Período</label>
+          <select id="d-periodo" onchange="renderDashboard()">
+            <option value="hoje">Hoje</option>
+            <option value="7d" selected>Últimos 7 dias</option>
+            <option value="30d">Últimos 30 dias</option>
+            <option value="mes">Mês atual</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Filial</label>
+          <select id="d-filial" onchange="renderDashboard()">
+            <option value="">Todas</option>
+            <option value="PETPE">PETPE</option>
+            <option value="PETGO">PETGO</option>
+            <option value="PITAJ">PITAJ</option>
+          </select>
+        </div>
+        <div class="dash-refresh">
+          <span class="refresh-dot"></span>
+          <span id="d-atualizado">—</span>
+          <button class="btn btn-ghost" style="padding:6px 12px;font-size:12px;" onclick="recarregarDashboard()">↻ Atualizar</button>
+        </div>
+      </div>
+
+      <!-- Bloco 1: KPIs do período -->
+      <div class="kpi-grid">
+        <div class="kpi-card blue">
+          <div class="kpi-label">Volumes no período</div>
+          <div class="kpi-value" id="d-kpi-total">—</div>
+          <div class="kpi-sub" id="d-kpi-total-sub">—</div>
+        </div>
+        <div class="kpi-card green">
+          <div class="kpi-label">Filiais ativas</div>
+          <div class="kpi-value" id="d-kpi-filiais">—</div>
+          <div class="kpi-sub">de 3 no total</div>
+        </div>
+        <div class="kpi-card amber">
+          <div class="kpi-label">Operadores ativos</div>
+          <div class="kpi-value" id="d-kpi-ops">—</div>
+          <div class="kpi-sub" id="d-kpi-ops-sub">—</div>
+        </div>
+        <div class="kpi-card pink">
+          <div class="kpi-label">Ritmo atual</div>
+          <div class="kpi-value" id="d-kpi-ritmo">—</div>
+          <div class="kpi-sub">volumes na última hora</div>
+        </div>
+        <div class="kpi-card blue">
+          <div class="kpi-label">Pico do dia</div>
+          <div class="kpi-value" id="d-kpi-pico">—</div>
+          <div class="kpi-sub" id="d-kpi-pico-sub">—</div>
+        </div>
+      </div>
+
+      <!-- Bloco 2: Comparação entre filiais -->
+      <div class="dash-row cols-3-2">
+        <div class="dash-card">
+          <div class="dash-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            Comparação entre filiais
+          </div>
+          <div class="chart-wrap" style="height:200px;">
+            <canvas id="chart-filiais"></canvas>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            Resumo por filial
+          </div>
+          <table class="dash-table">
+            <thead><tr>
+              <th>Filial</th>
+              <th class="r">Volumes</th>
+              <th>% total</th>
+              <th class="r">Vol/h</th>
+              <th class="r">Último bipe</th>
+            </tr></thead>
+            <tbody id="d-tabela-filiais"><tr><td colspan="5" class="dash-empty">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Bloco 3: Produtividade por operador -->
+      <div class="dash-row cols-3-2">
+        <div class="dash-card">
+          <div class="dash-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            Ranking de operadores
+          </div>
+          <div class="chart-wrap" style="height:220px;">
+            <canvas id="chart-operadores"></canvas>
+          </div>
+        </div>
+        <div class="dash-card">
+          <div class="dash-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2"/></svg>
+            Detalhe por operador
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="dash-table">
+              <thead><tr>
+                <th>#</th>
+                <th>Operador</th>
+                <th>Filial</th>
+                <th class="r">Vol</th>
+                <th class="r">Vol/h</th>
+              </tr></thead>
+              <tbody id="d-tabela-ops"><tr><td colspan="5" class="dash-empty">Carregando...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloco 4: Histórico e tendência -->
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Evolução temporal
+        </div>
+        <div class="dash-card-sub">Volumes por filial ao longo do período</div>
+        <div class="chart-wrap" style="height:220px;">
+          <canvas id="chart-serie"></canvas>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Concentração de volumes — hora × dia da semana
+        </div>
+        <div class="dash-card-sub">Intensidade de bipagem por horário e dia</div>
+        <div id="heatmap-wrap" style="overflow-x:auto;"></div>
+        <div class="heat-legend">
+          <span>Menos</span>
+          <div class="heat-legend-scale" id="heat-legend-scale"></div>
+          <span>Mais</span>
+        </div>
+      </div>
+
+      <!-- Resumo do período -->
+      <div class="dash-card">
+        <div class="dash-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          Resumo do período
+        </div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-item-label">Total de volumes</div>
+            <div class="summary-item-value" id="d-sum-total">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Média diária</div>
+            <div class="summary-item-value" id="d-sum-media">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">Melhor dia</div>
+            <div class="summary-item-value" id="d-sum-melhor">—</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-item-label">vs. período anterior</div>
+            <div class="summary-item-value" id="d-sum-delta">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /view-dashboard -->
   </main>
 </div>
 
@@ -465,6 +728,7 @@
 
     if (dados && dados.senha === pass) {
       usuarioLogado = user;
+      localStorage.setItem('reversa_user', user);
       erro.classList.remove('show');
       const tela = document.getElementById('tela-login');
       tela.classList.add('hide');
@@ -474,6 +738,7 @@
         // e vê todos os registros
         filialSessao = '';
         mostrarFiltroFilial(true);
+        document.getElementById('tabs-nav').style.display = 'flex';
         setTimeout(() => {
           tela.style.display = 'none';
           const entrada = document.getElementById('tela-entrada');
@@ -515,7 +780,34 @@
     document.getElementById('login-user').addEventListener('keydown', e => {
       if (e.key === 'Enter') document.getElementById('login-pass').focus();
     });
+
+    // Auto-login se tiver sessão salva
+    const savedUser = localStorage.getItem('reversa_user');
+    if (savedUser && USUARIOS[savedUser]) {
+      usuarioLogado = savedUser;
+      const dados = USUARIOS[savedUser];
+      filialSessao = dados.filial || '';
+      isMestre = dados.mestre;
+      mostrarFiltroFilial(dados.mestre);
+      document.getElementById('tela-login').style.display = 'none';
+      if (dados.mestre) {
+        document.getElementById('tabs-nav').style.display = 'flex';
+        document.getElementById('tela-entrada').style.display = 'flex';
+      } else {
+        const badge = document.getElementById('filial-badge');
+        if (badge) badge.innerHTML = `<span class="filial-pill filial-${filialSessao}">${filialSessao}</span>`;
+        document.getElementById('tela-entrada').style.display = 'none';
+        carregarHistorico();
+        iniciarGeo();
+        setTimeout(() => document.getElementById('operador').focus(), 300);
+      }
+    }
   });
+
+  function logout() {
+    localStorage.removeItem('reversa_user');
+    location.reload();
+  }
 </script>
 
 <script>
@@ -898,6 +1190,370 @@
   // Fechar modal clicando fora
   document.getElementById('modal-excluir').addEventListener('click', function(e) {
     if (e.target === this) fecharModal();
-  });</script>
+  });
+
+  // ── NAVEGAÇÃO POR ABAS ──
+  function trocarView(view) {
+    document.getElementById('view-bipagem').classList.toggle('active', view === 'bipagem');
+    document.getElementById('view-dashboard').classList.toggle('active', view === 'dashboard');
+    document.getElementById('tab-bipagem').classList.toggle('active', view === 'bipagem');
+    document.getElementById('tab-dashboard').classList.toggle('active', view === 'dashboard');
+    if (view === 'dashboard') renderDashboard();
+  }
+
+  // ── HELPERS DE DATA ──
+  function parseData(str) {
+    if (!str) return null;
+    const [d, t] = str.split(' ');
+    if (!d) return null;
+    const [dia, mes, ano] = d.split('/');
+    return new Date(`${ano}-${mes}-${dia}T${t || '00:00:00'}`);
+  }
+
+  function filtrarPorPeriodo(regs, periodo, filial) {
+    const agora = new Date();
+    const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    let de;
+    if (periodo === 'hoje') de = hoje;
+    else if (periodo === '7d') de = new Date(hoje.getTime() - 6 * 86400000);
+    else if (periodo === '30d') de = new Date(hoje.getTime() - 29 * 86400000);
+    else if (periodo === 'mes') de = new Date(agora.getFullYear(), agora.getMonth(), 1);
+    else de = hoje;
+    return regs.filter(r => {
+      const dt = parseData(r.datetime);
+      if (!dt) return false;
+      if (filial && r.filial !== filial) return false;
+      return dt >= de;
+    });
+  }
+
+  function filtrarPeriodoAnterior(regs, periodo, filial) {
+    const agora = new Date();
+    const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    let de, ate;
+    if (periodo === 'hoje') { de = new Date(hoje.getTime() - 86400000); ate = hoje; }
+    else if (periodo === '7d') { de = new Date(hoje.getTime() - 13 * 86400000); ate = new Date(hoje.getTime() - 6 * 86400000); }
+    else if (periodo === '30d') { de = new Date(hoje.getTime() - 59 * 86400000); ate = new Date(hoje.getTime() - 29 * 86400000); }
+    else if (periodo === 'mes') { de = new Date(agora.getFullYear(), agora.getMonth() - 1, 1); ate = new Date(agora.getFullYear(), agora.getMonth(), 1); }
+    else return [];
+    return regs.filter(r => {
+      const dt = parseData(r.datetime);
+      if (!dt || (filial && r.filial !== filial)) return false;
+      return dt >= de && dt < ate;
+    });
+  }
+
+  function ritmoHorasAtivas(regs) {
+    if (!regs.length) return 0;
+    const horas = new Set(regs.map(r => {
+      const dt = parseData(r.datetime);
+      return dt ? `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}-${dt.getHours()}` : null;
+    }).filter(Boolean));
+    return horas.size ? (regs.length / horas.size).toFixed(1) : 0;
+  }
+
+  function minutosDesde(regs, filial) {
+    const f = regs.filter(r => !filial || r.filial === filial);
+    if (!f.length) return null;
+    const ultimo = f.map(r => parseData(r.datetime)).filter(Boolean).sort((a, b) => b - a)[0];
+    return ultimo ? Math.floor((Date.now() - ultimo.getTime()) / 60000) : null;
+  }
+
+  function labelMinutos(m) {
+    if (m === null) return '—';
+    if (m < 1) return 'agora';
+    if (m < 60) return `há ${m} min`;
+    return `há ${Math.floor(m / 60)}h${m % 60 ? (m % 60) + 'min' : ''}`;
+  }
+
+  const FILIAIS_CORES = {
+    PETPE: { bg: 'rgba(79,142,247,0.7)', border: '#4f8ef7' },
+    PETGO: { bg: 'rgba(52,211,153,0.7)', border: '#34d399' },
+    PITAJ: { bg: 'rgba(251,191,36,0.7)',  border: '#fbbf24' },
+  };
+
+  let _charts = {};
+  function destruirChart(id) { if (_charts[id]) { _charts[id].destroy(); delete _charts[id]; } }
+
+  // ── RENDER DASHBOARD ──
+  function renderDashboard() {
+    const periodo = document.getElementById('d-periodo').value;
+    const filial  = document.getElementById('d-filial').value;
+    const regs    = filtrarPorPeriodo(registros, periodo, filial);
+    const agora   = new Date();
+
+    // Atualizado
+    document.getElementById('d-atualizado').textContent =
+      'Atualizado ' + agora.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+
+    renderKPIs(regs, periodo, filial);
+    renderFiliais(regs);
+    renderOperadores(regs);
+    renderSerie(regs, periodo, filial);
+    renderHeatmap(regs);
+    renderResumo(regs, periodo, filial);
+  }
+
+  // BLOCO 1 — KPIs
+  function renderKPIs(regs, periodo, filial) {
+    document.getElementById('d-kpi-total').textContent = regs.length;
+    const diasLabel = { hoje: 'hoje', '7d': 'nos últimos 7 dias', '30d': 'nos últimos 30 dias', mes: 'este mês' };
+    document.getElementById('d-kpi-total-sub').textContent = diasLabel[periodo] || '';
+    document.getElementById('d-kpi-filiais').textContent = new Set(regs.map(r => r.filial).filter(Boolean)).size;
+    const ops = new Set(regs.map(r => r.operador).filter(Boolean));
+    document.getElementById('d-kpi-ops').textContent = ops.size;
+    document.getElementById('d-kpi-ops-sub').textContent = ops.size ? [...ops].slice(0,3).join(', ') + (ops.size > 3 ? '...' : '') : '—';
+
+    // Ritmo: última hora cheia
+    const umaHoraAtras = new Date(Date.now() - 3600000);
+    const ritmo = regs.filter(r => { const dt = parseData(r.datetime); return dt && dt >= umaHoraAtras; }).length;
+    document.getElementById('d-kpi-ritmo').textContent = ritmo;
+
+    // Pico: só para "hoje"
+    const hoje = new Date(); const dHoje = `${String(hoje.getDate()).padStart(2,'0')}/${String(hoje.getMonth()+1).padStart(2,'0')}/${hoje.getFullYear()}`;
+    const regsHoje = registros.filter(r => r.datetime.startsWith(dHoje) && (!filial || r.filial === filial));
+    if (regsHoje.length) {
+      const contHora = {};
+      regsHoje.forEach(r => { const h = (parseData(r.datetime)||new Date()).getHours(); contHora[h] = (contHora[h]||0)+1; });
+      const picoH = Object.entries(contHora).sort((a,b) => b[1]-a[1])[0];
+      document.getElementById('d-kpi-pico').textContent = picoH[1];
+      document.getElementById('d-kpi-pico-sub').textContent = `às ${picoH[0]}h`;
+    } else {
+      document.getElementById('d-kpi-pico').textContent = '—';
+      document.getElementById('d-kpi-pico-sub').textContent = 'sem dados hoje';
+    }
+  }
+
+  // BLOCO 2 — Filiais
+  function renderFiliais(regs) {
+    const FILIAIS = ['PETPE','PETGO','PITAJ'];
+    const total = regs.length || 1;
+    const dados = FILIAIS.map(f => {
+      const fr = regs.filter(r => r.filial === f);
+      return { f, vol: fr.length, pct: ((fr.length/total)*100).toFixed(1), ritmo: ritmoHorasAtivas(fr), min: minutosDesde(regs, f) };
+    }).sort((a,b) => b.vol - a.vol);
+
+    // Gráfico barras
+    destruirChart('filiais');
+    const ctx = document.getElementById('chart-filiais').getContext('2d');
+    _charts['filiais'] = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: dados.map(d => d.f),
+        datasets: [{
+          data: dados.map(d => d.vol),
+          backgroundColor: dados.map(d => FILIAIS_CORES[d.f]?.bg || 'rgba(79,142,247,0.7)'),
+          borderColor:     dados.map(d => FILIAIS_CORES[d.f]?.border || '#4f8ef7'),
+          borderWidth: 1, borderRadius: 6,
+        }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color:'#8b90a0' }, grid: { color:'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color:'#e8eaf0', font:{weight:'600'} }, grid: { display:false } }
+        }
+      }
+    });
+
+    // Tabela
+    const tbody = document.getElementById('d-tabela-filiais');
+    if (!regs.length) { tbody.innerHTML = '<tr><td colspan="5" class="dash-empty">Sem dados no período</td></tr>'; return; }
+    tbody.innerHTML = dados.map(d => {
+      const cor = FILIAIS_CORES[d.f]?.border || '#4f8ef7';
+      return `<tr>
+        <td><span class="filial-pill filial-${d.f}">${d.f}</span></td>
+        <td class="r mono">${d.vol}</td>
+        <td><div class="pct-cell"><span style="font-size:11px;color:var(--text-2);min-width:32px">${d.pct}%</span><div class="pct-bar-bg"><div class="pct-bar-fill" style="width:${d.pct}%;background:${cor}"></div></div></div></td>
+        <td class="r mono">${d.ritmo}</td>
+        <td class="r" style="font-size:11px;color:var(--text-3)">${labelMinutos(d.min)}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // BLOCO 3 — Operadores
+  function renderOperadores(regs) {
+    const mapa = {};
+    regs.forEach(r => {
+      const k = r.operador || '—';
+      if (!mapa[k]) mapa[k] = { vol:0, filial: r.filial, tempos:[] };
+      mapa[k].vol++;
+      const dt = parseData(r.datetime);
+      if (dt) mapa[k].tempos.push(dt);
+    });
+    const lista = Object.entries(mapa).map(([op, d]) => ({
+      op, vol: d.vol, filial: d.filial,
+      ritmo: (() => {
+        if (!d.tempos.length) return 0;
+        const horas = new Set(d.tempos.map(t => `${t.getFullYear()}-${t.getMonth()}-${t.getDate()}-${t.getHours()}`));
+        return (d.vol / horas.size).toFixed(1);
+      })()
+    })).sort((a,b) => b.vol - a.vol).slice(0,10);
+
+    destruirChart('ops');
+    const ctx = document.getElementById('chart-operadores').getContext('2d');
+    _charts['ops'] = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: lista.map(d => d.op.length > 12 ? d.op.slice(0,12)+'…' : d.op),
+        datasets: [{
+          data: lista.map(d => d.vol),
+          backgroundColor: lista.map(d => FILIAIS_CORES[d.filial]?.bg || 'rgba(79,142,247,0.5)'),
+          borderColor:     lista.map(d => FILIAIS_CORES[d.filial]?.border || '#4f8ef7'),
+          borderWidth: 1, borderRadius: 5,
+        }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color:'#8b90a0' }, grid: { color:'rgba(255,255,255,0.05)' } },
+          y: { ticks: { color:'#e8eaf0', font:{size:11} }, grid: { display:false } }
+        }
+      }
+    });
+
+    const tbody = document.getElementById('d-tabela-ops');
+    if (!lista.length) { tbody.innerHTML = '<tr><td colspan="5" class="dash-empty">Sem dados</td></tr>'; return; }
+    tbody.innerHTML = lista.map((d,i) => `<tr>
+      <td class="rank">${i+1}</td>
+      <td style="font-size:12px">${d.op}</td>
+      <td><span class="filial-pill filial-${d.filial}" style="font-size:10px">${d.filial}</span></td>
+      <td class="r mono">${d.vol}</td>
+      <td class="r mono">${d.ritmo}</td>
+    </tr>`).join('');
+  }
+
+  // BLOCO 4a — Série temporal
+  function renderSerie(regs, periodo, filial) {
+    const agora = new Date();
+    const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
+    const isByHour = periodo === 'hoje';
+    let labels = [], buckets = {};
+
+    if (isByHour) {
+      for (let h = 0; h < 24; h++) labels.push(`${h}h`);
+      ['PETPE','PETGO','PITAJ'].forEach(f => { buckets[f] = new Array(24).fill(0); });
+      regs.forEach(r => {
+        const dt = parseData(r.datetime);
+        if (dt) (buckets[r.filial] || (buckets[r.filial]=[]))[dt.getHours()] = ((buckets[r.filial] || [])[dt.getHours()] || 0) + 1;
+      });
+    } else {
+      const dias = periodo === '7d' ? 7 : periodo === '30d' ? 30 : agora.getDate();
+      for (let i = dias - 1; i >= 0; i--) {
+        const d = new Date(hoje.getTime() - i * 86400000);
+        labels.push(`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`);
+      }
+      ['PETPE','PETGO','PITAJ'].forEach(f => { buckets[f] = new Array(labels.length).fill(0); });
+      regs.forEach(r => {
+        const dt = parseData(r.datetime);
+        if (!dt) return;
+        const lbl = `${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`;
+        const idx = labels.indexOf(lbl);
+        if (idx >= 0) buckets[r.filial][idx] = (buckets[r.filial][idx] || 0) + 1;
+      });
+    }
+
+    const FILIAIS_SHOW = filial ? [filial] : ['PETPE','PETGO','PITAJ'];
+    destruirChart('serie');
+    const ctx = document.getElementById('chart-serie').getContext('2d');
+    _charts['serie'] = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: FILIAIS_SHOW.map(f => ({
+          label: f, data: buckets[f] || [],
+          borderColor: FILIAIS_CORES[f]?.border, backgroundColor: FILIAIS_CORES[f]?.bg.replace('0.7','0.1'),
+          tension: 0.4, pointRadius: 3, fill: true, borderWidth: 2,
+        }))
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color:'#8b90a0', boxWidth:12 } } },
+        scales: {
+          x: { ticks: { color:'#8b90a0', maxTicksLimit:12 }, grid: { color:'rgba(255,255,255,0.04)' } },
+          y: { ticks: { color:'#8b90a0' }, grid: { color:'rgba(255,255,255,0.04)' }, beginAtZero:true }
+        }
+      }
+    });
+  }
+
+  // BLOCO 4b — Heatmap
+  function renderHeatmap(regs) {
+    const DIAS = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+    const grid = Array.from({length:7}, () => new Array(24).fill(0));
+    regs.forEach(r => {
+      const dt = parseData(r.datetime);
+      if (dt) grid[dt.getDay()][dt.getHours()]++;
+    });
+    const max = Math.max(...grid.flat(), 1);
+
+    const wrap = document.getElementById('heatmap-wrap');
+    const hm = document.createElement('div');
+    hm.className = 'heatmap';
+    hm.style.gridTemplateColumns = `40px repeat(24,1fr)`;
+
+    // Cabeçalho horas
+    hm.innerHTML += '<div></div>' + Array.from({length:24},(_,h)=>`<div class="heat-hour-label">${h}</div>`).join('');
+
+    // Linhas por dia
+    DIAS.forEach((dia, di) => {
+      hm.innerHTML += `<div class="heat-day-label">${dia}</div>`;
+      for (let h = 0; h < 24; h++) {
+        const v = grid[di][h];
+        const intensity = v / max;
+        const alpha = v === 0 ? 0 : 0.12 + intensity * 0.75;
+        const color = `rgba(79,142,247,${alpha.toFixed(2)})`;
+        hm.innerHTML += `<div class="heat-cell" style="background:${color}" title="${dia} ${h}h — ${v} vol"></div>`;
+      }
+    });
+    wrap.innerHTML = '';
+    wrap.appendChild(hm);
+
+    // Legenda
+    const scale = document.getElementById('heat-legend-scale');
+    scale.innerHTML = [0,.2,.4,.6,.8,1].map(v => {
+      const a = v === 0 ? 0 : 0.12 + v * 0.75;
+      return `<div class="heat-legend-box" style="background:rgba(79,142,247,${a.toFixed(2)})"></div>`;
+    }).join('');
+  }
+
+  // BLOCO 4c — Resumo
+  function renderResumo(regs, periodo, filial) {
+    document.getElementById('d-sum-total').textContent = regs.length;
+
+    // Média diária
+    const diasSet = new Set(regs.map(r => r.datetime.split(' ')[0]).filter(Boolean));
+    const media = diasSet.size ? (regs.length / diasSet.size).toFixed(1) : '—';
+    document.getElementById('d-sum-media').textContent = media;
+
+    // Melhor dia
+    const porDia = {};
+    regs.forEach(r => { const d = r.datetime.split(' ')[0]; if(d) porDia[d] = (porDia[d]||0)+1; });
+    const melhor = Object.entries(porDia).sort((a,b)=>b[1]-a[1])[0];
+    document.getElementById('d-sum-melhor').textContent = melhor ? `${melhor[0]} · ${melhor[1]} vol` : '—';
+
+    // Delta vs período anterior
+    const anterior = filtrarPeriodoAnterior(registros, periodo, filial);
+    const el = document.getElementById('d-sum-delta');
+    if (!anterior.length) { el.textContent = '—'; return; }
+    const delta = regs.length - anterior.length;
+    const pct = ((delta / anterior.length) * 100).toFixed(1);
+    const sinal = delta >= 0 ? '+' : '';
+    el.innerHTML = `${sinal}${pct}%<span class="delta ${delta>=0?'up':'down'}">${sinal}${delta}</span>`;
+  }
+
+  function recarregarDashboard() {
+    carregarHistorico().then(() => renderDashboard());
+  }
+
+  // Polling a cada 60s quando na aba dashboard
+  setInterval(() => {
+    if (document.getElementById('view-dashboard').classList.contains('active')) {
+      carregarHistorico().then(() => renderDashboard());
+    }
+  }, 60000);</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 </body>
 </html>
