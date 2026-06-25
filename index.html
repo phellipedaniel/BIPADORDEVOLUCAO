@@ -273,7 +273,7 @@
   </div>
 </div>
 
-<div class="loading-overlay" id="loading">
+<div class="loading-overlay hide" id="loading" style="display:none;">
   <div class="spinner"></div>
   <div class="loading-text">Carregando histórico do Sheets...</div>
 </div>
@@ -667,7 +667,10 @@
   async function carregarHistorico() {
     setSheetStatus('sending');
     try {
-      const res = await fetch(APPS_SCRIPT_URL + '?action=getAll', { mode: 'cors' });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(APPS_SCRIPT_URL + '?action=getAll', { mode: 'cors', signal: controller.signal });
+      clearTimeout(timeout);
       const data = await res.json();
       if (data.status === 'ok' && Array.isArray(data.rows)) {
         registros = data.rows
@@ -684,7 +687,7 @@
       setSheetStatus('idle');
     } catch(e) {
       setSheetStatus('error');
-      toast('Não foi possível carregar o histórico.', 'warning');
+      toast('Histórico indisponível — você pode bipar normalmente.', 'warning');
     } finally {
       document.getElementById('loading').classList.add('hide');
       renderTable();
