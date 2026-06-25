@@ -488,8 +488,8 @@
           const badge = document.getElementById('filial-badge');
           if (badge) badge.innerHTML = `<span class="filial-pill filial-${filialSessao}">${filialSessao}</span>`;
           document.getElementById('tela-entrada').style.display = 'none';
-          document.getElementById('loading').style.display = 'flex';
-          document.getElementById('loading').classList.remove('hide');
+          // Libera a tela imediatamente, histórico carrega em segundo plano
+          document.getElementById('loading').classList.add('hide');
           carregarHistorico();
           iniciarGeo();
           setTimeout(() => document.getElementById('operador').focus(), 600);
@@ -665,6 +665,7 @@
 
   // ── Carregar histórico do Sheets ──
   async function carregarHistorico() {
+    setSheetStatus('sending');
     try {
       const res = await fetch(APPS_SCRIPT_URL + '?action=getAll', { mode: 'cors' });
       const data = await res.json();
@@ -740,11 +741,11 @@
     const el = document.getElementById('sheet-status');
     if (!el) return;
     const map = {
-      idle:    {text:'Sheets conectado',  color:'var(--success)', dot:'#34d399'},
-      sending: {text:'Enviando...',        color:'var(--warning)', dot:'#fbbf24'},
-      ok:      {text:'Salvo no Sheets',   color:'var(--success)', dot:'#34d399'},
-      error:   {text:'Falha no envio',    color:'var(--danger)',  dot:'#f87171'},
-      off:     {text:'Sheets não config', color:'var(--text-3)',  dot:'#4a5068'},
+      idle:    {text:'Sheets conectado',       color:'var(--success)', dot:'#34d399'},
+      sending: {text:'Carregando histórico...', color:'var(--warning)', dot:'#fbbf24'},
+      ok:      {text:'Salvo no Sheets',         color:'var(--success)', dot:'#34d399'},
+      error:   {text:'Falha no envio',          color:'var(--danger)',  dot:'#f87171'},
+      off:     {text:'Sheets não config',       color:'var(--text-3)',  dot:'#4a5068'},
     };
     const s = map[status] || map.idle;
     el.innerHTML = `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${s.dot};margin-right:6px;vertical-align:middle"></span><span style="color:${s.color}">${s.text}</span>`;
