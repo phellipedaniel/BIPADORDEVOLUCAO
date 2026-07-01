@@ -821,6 +821,7 @@
           tela.style.display = 'none';
           const entrada = document.getElementById('tela-entrada');
           entrada.style.display = 'flex';
+          iniciarGeo(); // começa a capturar localização já na tela de entrada
         }, 400);
       } else {
         // Usuário normal: filial definida pelo login
@@ -871,6 +872,7 @@
       if (dados.mestre) {
         document.getElementById('tabs-nav').style.display = 'flex';
         document.getElementById('tela-entrada').style.display = 'flex';
+        iniciarGeo();
       } else {
         const badge = document.getElementById('filial-badge');
         if (badge) badge.innerHTML = `<span class="filial-pill filial-${filialSessao}">${filialSessao}</span>`;
@@ -918,6 +920,10 @@
       badge.innerHTML = `<span class="filial-pill filial-${filialSessao}">${filialSessao}</span>`;
     }
     document.getElementById('tela-entrada').classList.add('hide');
+    // Mestre: carrega histórico e garante que a geo está ativa ao entrar
+    document.getElementById('loading').classList.add('hide');
+    carregarHistorico();
+    iniciarGeo();
     setTimeout(() => {
       document.getElementById('tela-entrada').style.display = 'none';
       document.getElementById('operador').focus();
@@ -925,6 +931,9 @@
   }
 
   // ── Geolocalização ──
+  let _geoWatchId = null;
+  let _lastLat = null, _lastLon = null, _lastRev = 0;
+
   function iniciarGeo() {
     if (!navigator.geolocation) {
       atualizarGeoUI('GPS não disponível neste dispositivo', 'err');
@@ -932,44 +941,42 @@
     }
     atualizarGeoUI('Obtendo localização...', 'loading');
 
+    // Leitura inicial rápida
     navigator.geolocation.getCurrentPosition(
       pos => obterEndereco(pos.coords.latitude, pos.coords.longitude),
       err => {
         if (err.code === 1) {
-          atualizarGeoUI('Permissão negada — localização não será registrada', 'err');
+          atualizarGeoUI('Permissão negada — ative a localização no navegador', 'err');
         } else {
-          tentarWatch();
+          atualizarGeoUI('Buscando sinal GPS...', 'loading');
         }
       },
-      { enableHighAccuracy: false, timeout: 5000, maximumAge: 60000 }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
-  }
 
-  function tentarWatch() {
-    atualizarGeoUI('Aguardando sinal GPS...', 'loading');
-    const id = navigator.geolocation.watchPosition(
-      pos => {
-        navigator.geolocation.clearWatch(id);
-        clearTimeout(watchTimeout);
-        obterEndereco(pos.coords.latitude, pos.coords.longitude);
-      },
-      err => {
-        navigator.geolocation.clearWatch(id);
-        clearTimeout(watchTimeout);
-        geoAtual = '';
-        atualizarGeoUI('Sem localização — bipagem funcionando normalmente', 'err');
-      },
-      { enableHighAccuracy: false, maximumAge: 60000 }
-    );
-    // Desiste após 6s
-    const watchTimeout = setTimeout(() => {
-      navigator.geolocation.clearWatch(id);
-      geoAtual = '';
-      atualizarGeoUI('Sem localização — bipagem funcionando normalmente', 'err');
-    }, 6000);
+    // Acompanha a posição continuamente para manter geoAtual sempre atualizado
+    if (_geoWatchId === null) {
+      _geoWatchId = navigator.geolocation.watchPosition(
+        pos => obterEndereco(pos.coords.latitude, pos.coords.longitude),
+        err => {
+          if (err.code === 1) atualizarGeoUI('Permissão negada — ative a localização no navegador', 'err');
+        },
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 30000 }
+      );
+    }
   }
 
   async function obterEndereco(lat, lon) {
+    const coords = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    // Mostra coords de imediato se ainda não temos nada — a bipagem nunca fica sem localização
+    if (!geoAtual) { geoAtual = coords; atualizarGeoUI(geoAtual, 'ok'); }
+
+    // Evita martelar o Nominatim (limite ~1 req/s): só rebusca se moveu >~50m ou passaram 30s
+    const moveu = _lastLat === null || Math.abs(lat - _lastLat) > 0.0005 || Math.abs(lon - _lastLon) > 0.0005;
+    const passou = Date.now() - _lastRev > 30000;
+    if (!moveu && !passou) return;
+    _lastLat = lat; _lastLon = lon; _lastRev = Date.now();
+
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`, {
         headers: { 'Accept-Language': 'pt-BR' }
@@ -983,10 +990,10 @@
         a.city || a.town || a.village || '',
         a.state || ''
       ].filter(Boolean);
-      geoAtual = partes.join(', ') || `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      geoAtual = partes.join(', ') || coords;
       atualizarGeoUI(geoAtual, 'ok');
     } catch(e) {
-      geoAtual = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+      geoAtual = coords;
       atualizarGeoUI(geoAtual, 'ok');
     }
   }
