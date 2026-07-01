@@ -811,6 +811,10 @@
       const tela = document.getElementById('tela-login');
       tela.classList.add('hide');
 
+      // Dispara o pedido de localização AQUI, dentro do gesto do clique.
+      // É o único momento em que o navegador mostra o prompt de permissão de forma confiável.
+      iniciarGeo();
+
       if (dados.mestre) {
         // Mestre: vai pra tela de seleção de filial (pode bipar em qualquer uma)
         // e vê todos os registros
@@ -821,7 +825,6 @@
           tela.style.display = 'none';
           const entrada = document.getElementById('tela-entrada');
           entrada.style.display = 'flex';
-          iniciarGeo(); // começa a capturar localização já na tela de entrada
         }, 400);
       } else {
         // Usuário normal: filial definida pelo login
@@ -835,7 +838,6 @@
           // Libera a tela imediatamente, histórico carrega em segundo plano
           document.getElementById('loading').classList.add('hide');
           carregarHistorico();
-          iniciarGeo();
           setTimeout(() => document.getElementById('operador').focus(), 600);
         }, 400);
       }
