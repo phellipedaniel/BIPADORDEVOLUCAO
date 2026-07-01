@@ -370,12 +370,12 @@
     <div class="login-fields">
       <div class="form-group">
         <label class="form-label">Usuário</label>
-        <input type="text" id="login-user" placeholder="Digite seu usuário" autocomplete="off" spellcheck="false" autocapitalize="characters">
+        <input type="text" id="login-user" placeholder="Digite seu usuário" autocomplete="off" spellcheck="false" autocapitalize="characters" oninput="this.value = this.value.replace(/\s/g, '')" onkeydown="if(event.key === ' ') event.preventDefault()">
       </div>
       <div class="form-group">
         <label class="form-label">Senha</label>
         <div class="input-wrap">
-          <input type="password" id="login-pass" placeholder="Digite sua senha" autocomplete="off">
+          <input type="password" id="login-pass" placeholder="Digite sua senha" autocomplete="off" oninput="this.value = this.value.replace(/\s/g, '')" onkeydown="if(event.key === ' ') event.preventDefault()">
           <button class="toggle-pw" onclick="toggleSenha()" tabindex="-1" type="button">
             <svg id="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
